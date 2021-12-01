@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
+const save = document.getElementById("jsSave");
 
 const INITIAL_COLOR = "#2c2c2c";
 const CANVAS_SIZE = 700;
@@ -10,8 +11,10 @@ const CANVAS_SIZE = 700;
 canvas.width = CANVAS_SIZE;
 canvas.height = CANVAS_SIZE;
 
-ctx.strokeStyle = 'INITIAL_COLOR'; //canvas안에서 처음 나타낼 색상 지정
-ctx.fillStyle = "INITIAL_COLOR";
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+ctx.strokeStyle = INITIAL_COLOR; //canvas안에서 처음 나타낼 색상 지정
+ctx.fillStyle = INITIAL_COLOR;
 ctx.lineWidth = 2.5; // canvas안에서 처음 사용할 선 굵기 지정
 
 let painting = false;
@@ -41,17 +44,20 @@ function onMouseMove(event) {
 }
 
 function handleColorClick(event) {
+    // 색 변경
     const color = event.target.style.backgroundColor;
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
 }
 
 function handleRangeChange(event) {
+    // 크기조절 하는 방법
     const size = event.target.value;
     ctx.lineWidth = size;
 }
 
 function handleModeClick() {
+    //버튼 클릭시 글씨 바꿈
     if (filling === true) {
         filling = false;
         mode.innerText = "Fill";
@@ -64,8 +70,21 @@ function handleModeClick() {
 
 function handleCanvasClick() {
     if (filling) {
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);// 얼마나 채울 것인지
     }
+}
+
+function handelCM(event) {
+    event.preventDefault();
+
+}
+
+function handleSaveClick() {
+    const image = canvas.toDataURL();
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "PaintJS";
+    link.click();
 }
 
 if (canvas) {
@@ -74,6 +93,7 @@ if (canvas) {
     canvas.addEventListener("mouseup", stopPainting);
     canvas.addEventListener("mouseleave", stopPainting);
     canvas.addEventListener("click", handleCanvasClick);
+    canvas.addEventListener("contextmenu", handelCM);
 }
 
 Array.from(colors).forEach(color => color.addEventListener("click", handleColorClick));
@@ -84,4 +104,8 @@ if (range) {
 
 if (mode) {
     mode.addEventListener("click", handleModeClick);
+}
+
+if (save) {
+    save.addEventListener("click", handleSaveClick);
 }
